@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 @Builder
 @RestController
 @RequestMapping("/auth")
@@ -19,13 +20,12 @@ import org.springframework.web.bind.annotation.RestController;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AutheticationController {
     AuthenticationService authenticationService;
-@PostMapping("/log-in")
-    ApiResponse<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request){
-    boolean result = authenticationService.authenticate(request);
-    return ApiResponse.<AuthenticationResponse>builder()
-            .result(AuthenticationResponse.builder()
-            .authenticated(result)
-                    .build())
-            .build();
-}
+
+    @PostMapping("/log-in")
+    ApiResponse<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
+        var result = authenticationService.authenticate(request);
+        return ApiResponse.<AuthenticationResponse>builder()
+                .result(result)
+                .build();
+    }
 }
