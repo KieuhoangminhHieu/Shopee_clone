@@ -16,6 +16,6 @@ public class Category {
     private String description;
 
     @OneToMany(mappedBy = "category")
-    @JsonIgnore  // Tránh vòng lặp khi trả về JSON
+    @JsonIgnore
     private List<Product> products;
 }

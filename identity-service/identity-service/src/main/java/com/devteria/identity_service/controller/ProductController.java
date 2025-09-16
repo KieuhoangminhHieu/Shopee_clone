@@ -1,9 +1,12 @@
 package com.devteria.identity_service.controller;
 
-import com.devteria.identity_service.dto.ApiResponse;
-import com.devteria.identity_service.dto.ProductCreationRequest;
+import com.devteria.identity_service.dto.response.ApiResponse;
+import com.devteria.identity_service.dto.request.ProductCreationRequest;
 import com.devteria.identity_service.entity.Product;
 import com.devteria.identity_service.service.ProductService;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,10 +14,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/products")
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ProductController {
 
-    @Autowired
-    private ProductService productService;
+    ProductService productService;
 
     @PostMapping
     public ApiResponse<Product> createProduct(@RequestBody ProductCreationRequest request) {

@@ -4,15 +4,20 @@ import com.devteria.identity_service.entity.Category;
 import com.devteria.identity_service.exception.AppException;
 import com.devteria.identity_service.exception.ErrorCode;
 import com.devteria.identity_service.repository.CategoryRepository;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class CategoryService {
-    @Autowired
-    private CategoryRepository categoryRepository;
+
+    CategoryRepository categoryRepository;
 
     public Category createCategory(Category category) {
         return categoryRepository.save(category);

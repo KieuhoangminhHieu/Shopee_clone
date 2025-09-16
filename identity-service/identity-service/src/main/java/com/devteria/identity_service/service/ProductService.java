@@ -1,6 +1,6 @@
 package com.devteria.identity_service.service;
 
-import com.devteria.identity_service.dto.ProductCreationRequest;
+import com.devteria.identity_service.dto.request.ProductCreationRequest;
 import com.devteria.identity_service.entity.Category;
 import com.devteria.identity_service.entity.Product;
 import com.devteria.identity_service.entity.Shop;
@@ -9,22 +9,27 @@ import com.devteria.identity_service.exception.ErrorCode;
 import com.devteria.identity_service.repository.CategoryRepository;
 import com.devteria.identity_service.repository.ProductRepository;
 import com.devteria.identity_service.repository.ShopRepository;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ProductService {
 
-    @Autowired
-    private ProductRepository productRepository;
 
-    @Autowired
-    private ShopRepository shopRepository;
+    ProductRepository productRepository;
 
-    @Autowired
-    private CategoryRepository categoryRepository;
+
+    ShopRepository shopRepository;
+
+
+    CategoryRepository categoryRepository;
 
     public Product createProduct(ProductCreationRequest request) {
         Product product = new Product();

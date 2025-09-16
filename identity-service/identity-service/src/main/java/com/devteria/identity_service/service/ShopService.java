@@ -6,26 +6,28 @@ import com.devteria.identity_service.exception.AppException;
 import com.devteria.identity_service.exception.ErrorCode;
 import com.devteria.identity_service.repository.ShopRepository;
 import com.devteria.identity_service.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ShopService {
 
-    @Autowired
-    private ShopRepository shopRepository;
+    ShopRepository shopRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+
+    UserRepository userRepository;
 
     public Shop createShop(Shop shop) {
-        // Kiểm tra userId tồn tại
+
         User user = userRepository.findById(shop.getUserId())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
-        // Nếu cần, có thể check 1 user chỉ có 1 shop duy nhất
         return shopRepository.save(shop);
     }
 
@@ -41,7 +43,7 @@ public class ShopService {
     public Shop updateShop(String id, Shop updatedShop) {
         Shop shop = getShopById(id);
 
-        // Kiểm tra userId tồn tại
+
         userRepository.findById(updatedShop.getUserId())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 

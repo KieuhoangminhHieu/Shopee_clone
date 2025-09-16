@@ -1,8 +1,11 @@
 package com.devteria.identity_service.controller;
 
-import com.devteria.identity_service.dto.ApiResponse;
+import com.devteria.identity_service.dto.response.ApiResponse;
 import com.devteria.identity_service.entity.Category;
 import com.devteria.identity_service.service.CategoryService;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,10 +13,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/categories")
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class CategoryController {
 
-    @Autowired
-    private CategoryService categoryService;
+    CategoryService categoryService;
 
     @PostMapping
     public ApiResponse<Category> createCategory(@RequestBody Category category) {

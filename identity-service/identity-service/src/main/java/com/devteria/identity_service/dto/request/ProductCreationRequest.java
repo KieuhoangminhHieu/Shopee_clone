@@ -1,7 +1,6 @@
-package com.devteria.identity_service.dto;
+package com.devteria.identity_service.dto.request;
 
 import lombok.Data;
-import java.math.BigDecimal;
 
 @Data
 public class ProductCreationRequest {

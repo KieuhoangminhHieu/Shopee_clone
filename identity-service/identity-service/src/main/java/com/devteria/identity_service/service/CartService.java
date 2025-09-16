@@ -1,6 +1,6 @@
 package com.devteria.identity_service.service;
 
-import com.devteria.identity_service.dto.CartItemRequest;
+import com.devteria.identity_service.dto.request.CartItemRequest;
 import com.devteria.identity_service.entity.Cart;
 import com.devteria.identity_service.entity.CartItem;
 import com.devteria.identity_service.entity.Product;
@@ -11,25 +11,24 @@ import com.devteria.identity_service.repository.CartItemRepository;
 import com.devteria.identity_service.repository.CartRepository;
 import com.devteria.identity_service.repository.ProductRepository;
 import com.devteria.identity_service.repository.UserRepository;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class CartService {
 
-    @Autowired
-    private CartRepository cartRepository;
+    CartRepository cartRepository;
 
-    @Autowired
-    private CartItemRepository cartItemRepository;
+    CartItemRepository cartItemRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    UserRepository userRepository;
 
-    @Autowired
-    private ProductRepository productRepository;
+    ProductRepository productRepository;
 
     public Cart addItemToCart(String userId, CartItemRequest request) {
         User user = userRepository.findById(userId)
