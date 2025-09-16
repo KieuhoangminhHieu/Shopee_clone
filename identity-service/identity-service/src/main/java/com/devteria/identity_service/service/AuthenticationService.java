@@ -1,10 +1,11 @@
 package com.devteria.identity_service.service;
+import org.apache.commons.collections4.CollectionUtils;
 
-import ch.qos.logback.classic.Logger;
 import com.devteria.identity_service.dto.request.AuthenticationRequest;
 import com.devteria.identity_service.dto.request.IntrospectRequest;
 import com.devteria.identity_service.dto.response.AuthenticationResponse;
 import com.devteria.identity_service.dto.response.IntrospectResponse;
+import com.devteria.identity_service.entity.User;
 import com.devteria.identity_service.exception.AppException;
 import com.devteria.identity_service.exception.ErrorCode;
 import com.devteria.identity_service.repository.UserRepository;
@@ -28,6 +29,8 @@ import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.StringJoiner;
+
 @Slf4j
 @Builder
 @Service
@@ -57,7 +60,7 @@ public class AuthenticationService {
         boolean autheticated = passwordEncoder.matches(request.getPassword(), user.getPassword());
         if (!autheticated)
             throw new AppException(ErrorCode.UNAUTHENTICATED);
-        var token = generateToken(request.getUsername());
+        var token = generateToken(user);
 
         return AuthenticationResponse.builder()
                 .token(token)
@@ -65,16 +68,16 @@ public class AuthenticationService {
                 .build();
     }
 
-    private String generateToken(String username) {
+    private String generateToken(User user) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
-                .subject(username)
-                .issuer("devteria.com")
+                .subject(user.getUsername())
+                .issuer("Shopeeclone.com")
                 .issueTime(new Date())
                 .expirationTime(new Date(
                         Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()
                 ))
-                .claim("customClaim", "Custom")
+                .claim("Scope", builderScope(user))
                 .build();
 
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());
@@ -87,6 +90,15 @@ public class AuthenticationService {
             throw new
                     RuntimeException(e);
         }
+
     }
+    private String builderScope(User user) {
+        StringJoiner stringJoiner = new StringJoiner(" ");
+        if (CollectionUtils.isNotEmpty(user.getRoles()))
+            user.getRoles().forEach(stringJoiner::add);
+
+        return stringJoiner.toString();
 }
 
+
+}

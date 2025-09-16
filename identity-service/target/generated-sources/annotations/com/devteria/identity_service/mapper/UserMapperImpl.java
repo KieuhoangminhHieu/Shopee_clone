@@ -4,12 +4,14 @@ import com.devteria.identity_service.dto.request.UserCreationRequest;
 import com.devteria.identity_service.dto.request.UserUpdateRequest;
 import com.devteria.identity_service.dto.response.UserResponse;
 import com.devteria.identity_service.entity.User;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import javax.annotation.processing.Generated;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-09-16T13:54:31+0700",
+    date = "2025-09-16T15:36:40+0700",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.8 (Oracle Corporation)"
 )
 @Component
@@ -21,18 +23,18 @@ public class UserMapperImpl implements UserMapper {
             return null;
         }
 
-        User user = new User();
+        User.UserBuilder user = User.builder();
 
-        user.setFirstName( request.getFirstName() );
-        user.setLastName( request.getLastName() );
-        user.setUsername( request.getUsername() );
-        user.setPassword( request.getPassword() );
-        user.setDob( request.getDob() );
-        user.setEmail( request.getEmail() );
-        user.setPhoneNumber( request.getPhoneNumber() );
-        user.setAddress( request.getAddress() );
+        user.firstName( request.getFirstName() );
+        user.lastName( request.getLastName() );
+        user.username( request.getUsername() );
+        user.password( request.getPassword() );
+        user.dob( request.getDob() );
+        user.email( request.getEmail() );
+        user.phoneNumber( request.getPhoneNumber() );
+        user.address( request.getAddress() );
 
-        return user;
+        return user.build();
     }
 
     @Override
@@ -47,11 +49,14 @@ public class UserMapperImpl implements UserMapper {
         userResponse.setFirstName( user.getFirstName() );
         userResponse.setLastName( user.getLastName() );
         userResponse.setUsername( user.getUsername() );
-        userResponse.setPassword( user.getPassword() );
         userResponse.setDob( user.getDob() );
         userResponse.setEmail( user.getEmail() );
         userResponse.setPhoneNumber( user.getPhoneNumber() );
         userResponse.setAddress( user.getAddress() );
+        Set<String> set = user.getRoles();
+        if ( set != null ) {
+            userResponse.setRoles( new LinkedHashSet<String>( set ) );
+        }
 
         return userResponse;
     }
