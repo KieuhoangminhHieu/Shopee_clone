@@ -77,7 +77,7 @@ public class AuthenticationService {
                 .expirationTime(new Date(
                         Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()
                 ))
-                .claim("Scope", builderScope(user))
+                .claim("scope", builderScope(user))
                 .build();
 
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());
@@ -96,7 +96,6 @@ public class AuthenticationService {
         StringJoiner stringJoiner = new StringJoiner(" ");
         if (CollectionUtils.isNotEmpty(user.getRoles()))
             user.getRoles().forEach(stringJoiner::add);
-
         return stringJoiner.toString();
 }
 
