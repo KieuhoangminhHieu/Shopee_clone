@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-09-17T10:37:43+0700",
+    date = "2025-09-17T13:50:06+0700",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.8 (Oracle Corporation)"
 )
 @Component
@@ -43,22 +43,22 @@ public class UserMapperImpl implements UserMapper {
             return null;
         }
 
-        UserResponse userResponse = new UserResponse();
+        UserResponse.UserResponseBuilder userResponse = UserResponse.builder();
 
-        userResponse.setId( user.getId() );
-        userResponse.setFirstName( user.getFirstName() );
-        userResponse.setLastName( user.getLastName() );
-        userResponse.setUsername( user.getUsername() );
-        userResponse.setDob( user.getDob() );
-        userResponse.setEmail( user.getEmail() );
-        userResponse.setPhoneNumber( user.getPhoneNumber() );
-        userResponse.setAddress( user.getAddress() );
+        userResponse.id( user.getId() );
+        userResponse.firstName( user.getFirstName() );
+        userResponse.lastName( user.getLastName() );
+        userResponse.username( user.getUsername() );
+        userResponse.dob( user.getDob() );
+        userResponse.email( user.getEmail() );
+        userResponse.phoneNumber( user.getPhoneNumber() );
+        userResponse.address( user.getAddress() );
         Set<String> set = user.getRoles();
         if ( set != null ) {
-            userResponse.setRoles( new LinkedHashSet<String>( set ) );
+            userResponse.roles( new LinkedHashSet<String>( set ) );
         }
 
-        return userResponse;
+        return userResponse.build();
     }
 
     @Override
