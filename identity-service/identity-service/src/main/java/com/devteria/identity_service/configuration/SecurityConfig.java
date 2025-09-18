@@ -1,6 +1,6 @@
 package com.devteria.identity_service.configuration;
 
-import com.devteria.identity_service.enums.Role;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,7 +25,7 @@ import javax.crypto.spec.SecretKeySpec;
 @EnableMethodSecurity
 public class SecurityConfig {
     private final String[] PUBLIC_ENDPOINTS = {
-            "/auth/token", "/auth/introspect", "/users"
+            "/auth/token", "/auth/introspect", "/users", "/auth/logout"
     };
     @Value("${jwt.signerKey}")
     private String signerKey;
