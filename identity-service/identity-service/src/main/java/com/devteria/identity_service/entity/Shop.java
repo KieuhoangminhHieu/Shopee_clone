@@ -17,6 +17,6 @@ public class Shop {
     private String userId;
 
     @OneToMany(mappedBy = "shop")
-    @JsonIgnore  // Tránh vòng lặp khi trả về JSON
+    @JsonIgnore
     private List<Product> products;
 }

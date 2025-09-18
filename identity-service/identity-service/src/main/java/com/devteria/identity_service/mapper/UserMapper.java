@@ -6,6 +6,7 @@ import com.devteria.identity_service.dto.response.UserResponse;
 import com.devteria.identity_service.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "Spring")
 
@@ -14,5 +15,6 @@ public interface UserMapper {
 
     UserResponse toUserResponse(User user);
 
-    void updateUser(UserUpdateRequest request, @MappingTarget User user);
+    @Mapping(target = "roles", ignore = true)
+    void updateUser(@MappingTarget User user, UserUpdateRequest request);
 }

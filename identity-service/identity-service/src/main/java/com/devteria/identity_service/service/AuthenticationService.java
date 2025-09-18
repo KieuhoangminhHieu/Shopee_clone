@@ -57,8 +57,8 @@ public class AuthenticationService {
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         var user = userRepository.findByUsername(request.getUsername()).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
-        boolean autheticated = passwordEncoder.matches(request.getPassword(), user.getPassword());
-        if (!autheticated)
+        boolean authenticated = passwordEncoder.matches(request.getPassword(), user.getPassword());
+        if (!authenticated)
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         var token = generateToken(user);
 
@@ -77,7 +77,7 @@ public class AuthenticationService {
                 .expirationTime(new Date(
                         Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()
                 ))
-                .claim("scope", builderScope(user))
+                .claim("scope", buildScope(user))
                 .build();
 
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());
@@ -92,12 +92,18 @@ public class AuthenticationService {
         }
 
     }
-    private String builderScope(User user) {
+    private String buildScope(User user) {
         StringJoiner stringJoiner = new StringJoiner(" ");
-        if (CollectionUtils.isNotEmpty(user.getRoles()))
-            user.getRoles().forEach(stringJoiner::add);
+
+        if (!CollectionUtils.isEmpty(user.getRoles()))
+            user.getRoles().forEach(role -> {
+                stringJoiner.add("ROLE_" + role.getName());
+                if (!CollectionUtils.isEmpty(role.getPermissions()))
+                    role.getPermissions().forEach(permission -> stringJoiner.add(permission.getName()));
+            });
+
         return stringJoiner.toString();
-}
+    }
 
 
 }
