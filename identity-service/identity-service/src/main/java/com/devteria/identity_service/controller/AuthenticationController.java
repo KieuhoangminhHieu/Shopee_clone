@@ -3,6 +3,7 @@ package com.devteria.identity_service.controller;
 import com.devteria.identity_service.dto.request.AuthenticationRequest;
 import com.devteria.identity_service.dto.request.IntrospectRequest;
 import com.devteria.identity_service.dto.request.LogoutRequest;
+import com.devteria.identity_service.dto.request.RefreshRequest;
 import com.devteria.identity_service.dto.response.ApiResponse;
 import com.devteria.identity_service.dto.response.AuthenticationResponse;
 import com.devteria.identity_service.dto.response.IntrospectResponse;
@@ -35,6 +36,14 @@ public class AuthenticationController {
                 .build();
     }
 
+    @PostMapping("/refresh")
+    ApiResponse<AuthenticationResponse> authenticate(@RequestBody RefreshRequest request) throws ParseException, JOSEException {
+        var result = authenticationService.refreshToken(request);
+        return ApiResponse.<AuthenticationResponse>builder()
+                .result(result)
+                .build();
+    }
+
     @PostMapping("/introspect")
     ApiResponse<IntrospectResponse> authenticate(@RequestBody IntrospectRequest request)
             throws ParseException, JOSEException {
@@ -43,10 +52,10 @@ public class AuthenticationController {
                 .result(result)
                 .build();
     }
+
     @PostMapping("/logout")
-    ApiResponse<Void> logout(@RequestBody LogoutRequest request)
-            throws ParseException, JOSEException {
-        return ApiResponse.<Void>builder()
-                .build();
+    ApiResponse<Void> logout(@RequestBody LogoutRequest request) throws ParseException, JOSEException {
+        authenticationService.logout(request);
+        return ApiResponse.<Void>builder().build();
     }
 }
