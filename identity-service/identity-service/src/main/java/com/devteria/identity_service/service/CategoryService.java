@@ -1,47 +1,65 @@
 package com.devteria.identity_service.service;
 
+import com.devteria.identity_service.dto.request.CategoryRequest;
+import com.devteria.identity_service.dto.response.CategoryResponse;
 import com.devteria.identity_service.entity.Category;
 import com.devteria.identity_service.exception.AppException;
 import com.devteria.identity_service.exception.ErrorCode;
 import com.devteria.identity_service.repository.CategoryRepository;
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class CategoryService {
 
-    CategoryRepository categoryRepository;
+    private final CategoryRepository categoryRepository;
 
-    public Category createCategory(Category category) {
-        return categoryRepository.save(category);
+    @PreAuthorize("hasRole('ADMIN')")
+    public CategoryResponse createCategory(CategoryRequest request) {
+        Category category = Category.builder()
+                .name(request.getName())
+                .description(request.getDescription())
+                .build();
+        return toResponse(categoryRepository.save(category));
     }
 
-    public List<Category> getCategories() {
-        return categoryRepository.findAll();
+    public List<CategoryResponse> getAllCategories() {
+        return categoryRepository.findAll().stream()
+                .map(this::toResponse)
+                .toList();
     }
 
-    public Category getCategoryById(String id) {
-        return categoryRepository.findById(id)
+    public CategoryResponse getCategoryById(String id) {
+        Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.INVALID_KEY));
+        return toResponse(category);
     }
 
-    public Category updateCategory(String id, Category updatedCategory) {
-        Category category = getCategoryById(id);
-        category.setName(updatedCategory.getName());
-        category.setDescription(updatedCategory.getDescription());
-        return categoryRepository.save(category);
+    @PreAuthorize("hasRole('ADMIN')")
+    public CategoryResponse updateCategory(String id, CategoryRequest request) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.INVALID_KEY));
+        category.setName(request.getName());
+        category.setDescription(request.getDescription());
+        return toResponse(categoryRepository.save(category));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteCategory(String id) {
-        if (!categoryRepository.existsById(id)) {
-            throw new AppException(ErrorCode.INVALID_KEY);
-        }
-        categoryRepository.deleteById(id);
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.INVALID_KEY));
+        categoryRepository.delete(category);
+    }
+
+    private CategoryResponse toResponse(Category category) {
+        CategoryResponse response = new CategoryResponse();
+        response.setId(category.getId());
+        response.setName(category.getName());
+        response.setDescription(category.getDescription());
+        return response;
     }
 }

@@ -1,12 +1,12 @@
 package com.devteria.identity_service.controller;
 
+import com.devteria.identity_service.dto.request.ShopCreationRequest;
+import com.devteria.identity_service.dto.request.ShopUpdateRequest;
 import com.devteria.identity_service.dto.response.ApiResponse;
-import com.devteria.identity_service.entity.Shop;
+import com.devteria.identity_service.dto.response.ShopResponse;
 import com.devteria.identity_service.service.ShopService;
-import lombok.AccessLevel;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,43 +14,42 @@ import java.util.List;
 @RestController
 @RequestMapping("/shops")
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ShopController {
-    ShopService shopService;
+
+    private final ShopService shopService;
 
     @PostMapping
-    public ApiResponse<Shop> createShop(@RequestBody Shop shop) {
-        ApiResponse<Shop> response = new ApiResponse<>();
-        response.setResult(shopService.createShop(shop));
-        return response;
+    public ApiResponse<ShopResponse> createShop(@RequestBody @Valid ShopCreationRequest request) {
+        return ApiResponse.<ShopResponse>builder()
+                .result(shopService.createShop(request))
+                .build();
     }
 
     @GetMapping
-    public ApiResponse<List<Shop>> getShops() {
-        ApiResponse<List<Shop>> response = new ApiResponse<>();
-        response.setResult(shopService.getShops());
-        return response;
+    public ApiResponse<List<ShopResponse>> getShops() {
+        return ApiResponse.<List<ShopResponse>>builder()
+                .result(shopService.getShops())
+                .build();
     }
 
-    @GetMapping("/{shopId}")
-    public ApiResponse<Shop> getShop(@PathVariable String shopId) {
-        ApiResponse<Shop> response = new ApiResponse<>();
-        response.setResult(shopService.getShopById(shopId));
-        return response;
+    @GetMapping("/{id}")
+    public ApiResponse<ShopResponse> getShopById(@PathVariable String id) {
+        return ApiResponse.<ShopResponse>builder()
+                .result(shopService.getShopById(id))
+                .build();
     }
 
-    @PutMapping("/{shopId}")
-    public ApiResponse<Shop> updateShop(@PathVariable String shopId, @RequestBody Shop shop) {
-        ApiResponse<Shop> response = new ApiResponse<>();
-        response.setResult(shopService.updateShop(shopId, shop));
-        return response;
+    @PutMapping("/{id}")
+    public ApiResponse<ShopResponse> updateShop(@PathVariable String id,
+                                                @RequestBody @Valid ShopUpdateRequest request) {
+        return ApiResponse.<ShopResponse>builder()
+                .result(shopService.updateShop(id, request))
+                .build();
     }
 
-    @DeleteMapping("/{shopId}")
-    public ApiResponse<String> deleteShop(@PathVariable String shopId) {
-        shopService.deleteShop(shopId);
-        ApiResponse<String> response = new ApiResponse<>();
-        response.setResult("Shop deleted successfully");
-        return response;
+    @DeleteMapping("/{id}")
+    public ApiResponse<Void> deleteShop(@PathVariable String id) {
+        shopService.deleteShop(id);
+        return ApiResponse.<Void>builder().build();
     }
 }

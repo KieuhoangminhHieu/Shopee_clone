@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatusCode;
 public enum ErrorCode {
 
     SHOP_NOT_FOUND(1005, "Shop not found", HttpStatus.NOT_FOUND),
+    SHOP_EXISTED(1005, "Shop name is not available", HttpStatus.NOT_FOUND),
     CATEGORY_NOT_FOUND(1006, "Category not found", HttpStatus.NOT_FOUND),
     USER_NOT_FOUND(1004, "User not found", HttpStatus.NOT_FOUND),
 

@@ -2,11 +2,14 @@ package com.devteria.identity_service.entity;
 
 import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
 public class Shop {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

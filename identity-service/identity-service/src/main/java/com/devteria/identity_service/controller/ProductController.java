@@ -1,13 +1,10 @@
 package com.devteria.identity_service.controller;
 
-import com.devteria.identity_service.dto.response.ApiResponse;
-import com.devteria.identity_service.dto.request.ProductCreationRequest;
-import com.devteria.identity_service.entity.Product;
+import com.devteria.identity_service.dto.request.ProductRequest;
+import com.devteria.identity_service.dto.response.ProductResponse;
 import com.devteria.identity_service.service.ProductService;
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,45 +12,34 @@ import java.util.List;
 @RestController
 @RequestMapping("/products")
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ProductController {
 
-    ProductService productService;
+    private final ProductService productService;
 
     @PostMapping
-    public ApiResponse<Product> createProduct(@RequestBody ProductCreationRequest request) {
-        ApiResponse<Product> response = new ApiResponse<>();
-        response.setResult(productService.createProduct(request));
-        return response;
+    public ResponseEntity<ProductResponse> createProduct(@RequestBody ProductRequest request) {
+        return ResponseEntity.ok(productService.createProduct(request));
     }
 
     @GetMapping
-    public ApiResponse<List<Product>> getProducts() {
-        ApiResponse<List<Product>> response = new ApiResponse<>();
-        response.setResult(productService.getProducts());
-        return response;
+    public ResponseEntity<List<ProductResponse>> getAllProducts() {
+        return ResponseEntity.ok(productService.getAllProducts());
     }
 
-    @GetMapping("/{productId}")
-    public ApiResponse<Product> getProduct(@PathVariable String productId) {
-        ApiResponse<Product> response = new ApiResponse<>();
-        response.setResult(productService.getProductById(productId));
-        return response;
+    @GetMapping("/{id}")
+    public ResponseEntity<ProductResponse> getProductById(@PathVariable String id) {
+        return ResponseEntity.ok(productService.getProductById(id));
     }
 
-    @PutMapping("/{productId}")
-    public ApiResponse<Product> updateProduct(@PathVariable String productId,
-                                              @RequestBody ProductCreationRequest request) {
-        ApiResponse<Product> response = new ApiResponse<>();
-        response.setResult(productService.updateProduct(productId, request));
-        return response;
+    @PutMapping("/{id}")
+    public ResponseEntity<ProductResponse> updateProduct(@PathVariable String id,
+                                                         @RequestBody ProductRequest request) {
+        return ResponseEntity.ok(productService.updateProduct(id, request));
     }
 
-    @DeleteMapping("/{productId}")
-    public ApiResponse<String> deleteProduct(@PathVariable String productId) {
-        productService.deleteProduct(productId);
-        ApiResponse<String> response = new ApiResponse<>();
-        response.setResult("Product deleted successfully!");
-        return response;
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable String id) {
+        productService.deleteProduct(id);
+        return ResponseEntity.noContent().build();
     }
 }

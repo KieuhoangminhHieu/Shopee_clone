@@ -1,12 +1,9 @@
 package com.devteria.identity_service.controller;
 
-import com.devteria.identity_service.dto.response.ApiResponse;
-import com.devteria.identity_service.entity.Category;
+import com.devteria.identity_service.dto.request.CategoryRequest;
+import com.devteria.identity_service.dto.response.CategoryResponse;
 import com.devteria.identity_service.service.CategoryService;
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,44 +11,32 @@ import java.util.List;
 @RestController
 @RequestMapping("/categories")
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class CategoryController {
 
-    CategoryService categoryService;
+    private final CategoryService categoryService;
 
     @PostMapping
-    public ApiResponse<Category> createCategory(@RequestBody Category category) {
-        ApiResponse<Category> response = new ApiResponse<>();
-        response.setResult(categoryService.createCategory(category));
-        return response;
+    public CategoryResponse create(@RequestBody CategoryRequest request) {
+        return categoryService.createCategory(request);
     }
 
     @GetMapping
-    public ApiResponse<List<Category>> getCategories() {
-        ApiResponse<List<Category>> response = new ApiResponse<>();
-        response.setResult(categoryService.getCategories());
-        return response;
+    public List<CategoryResponse> getAll() {
+        return categoryService.getAllCategories();
     }
 
-    @GetMapping("/{categoryId}")
-    public ApiResponse<Category> getCategory(@PathVariable String categoryId) {
-        ApiResponse<Category> response = new ApiResponse<>();
-        response.setResult(categoryService.getCategoryById(categoryId));
-        return response;
+    @GetMapping("/{id}")
+    public CategoryResponse getById(@PathVariable String id) {
+        return categoryService.getCategoryById(id);
     }
 
-    @PutMapping("/{categoryId}")
-    public ApiResponse<Category> updateCategory(@PathVariable String categoryId, @RequestBody Category category) {
-        ApiResponse<Category> response = new ApiResponse<>();
-        response.setResult(categoryService.updateCategory(categoryId, category));
-        return response;
+    @PutMapping("/{id}")
+    public CategoryResponse update(@PathVariable String id, @RequestBody CategoryRequest request) {
+        return categoryService.updateCategory(id, request);
     }
 
-    @DeleteMapping("/{categoryId}")
-    public ApiResponse<String> deleteCategory(@PathVariable String categoryId) {
-        categoryService.deleteCategory(categoryId);
-        ApiResponse<String> response = new ApiResponse<>();
-        response.setResult("Category deleted successfully");
-        return response;
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable String id) {
+        categoryService.deleteCategory(id);
     }
 }
