@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
+
 @Entity
 @Getter
 @Setter
@@ -18,7 +20,7 @@ public class Product {
 
     String name;
     String description;
-    Double price;
+    BigDecimal price;
 
     @ManyToOne
     @JoinColumn(name = "shop_id", nullable = false)

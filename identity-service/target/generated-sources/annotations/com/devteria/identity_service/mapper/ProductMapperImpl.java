@@ -5,12 +5,13 @@ import com.devteria.identity_service.dto.response.ProductResponse;
 import com.devteria.identity_service.entity.Category;
 import com.devteria.identity_service.entity.Product;
 import com.devteria.identity_service.entity.Shop;
+import java.math.BigDecimal;
 import javax.annotation.processing.Generated;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-09-19T14:25:39+0700",
+    date = "2025-09-20T17:15:48+0700",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.8 (Oracle Corporation)"
 )
 @Component
@@ -26,7 +27,9 @@ public class ProductMapperImpl implements ProductMapper {
 
         product.name( request.getName() );
         product.description( request.getDescription() );
-        product.price( request.getPrice() );
+        if ( request.getPrice() != null ) {
+            product.price( BigDecimal.valueOf( request.getPrice() ) );
+        }
 
         return product.build();
     }
@@ -44,7 +47,9 @@ public class ProductMapperImpl implements ProductMapper {
         productResponse.setId( product.getId() );
         productResponse.setName( product.getName() );
         productResponse.setDescription( product.getDescription() );
-        productResponse.setPrice( product.getPrice() );
+        if ( product.getPrice() != null ) {
+            productResponse.setPrice( product.getPrice().doubleValue() );
+        }
 
         return productResponse;
     }
@@ -57,7 +62,12 @@ public class ProductMapperImpl implements ProductMapper {
 
         product.setName( request.getName() );
         product.setDescription( request.getDescription() );
-        product.setPrice( request.getPrice() );
+        if ( request.getPrice() != null ) {
+            product.setPrice( BigDecimal.valueOf( request.getPrice() ) );
+        }
+        else {
+            product.setPrice( null );
+        }
     }
 
     private String productShopShopName(Product product) {
