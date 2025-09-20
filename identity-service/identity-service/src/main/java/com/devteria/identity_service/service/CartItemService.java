@@ -100,7 +100,7 @@ public class CartItemService {
 
     private void removeCartItemFromCart(Cart cart, String productId) {
         CartItem item = cartItemRepository.findByCart_IdAndProduct_Id(cart.getId(), productId)
-                .orElseThrow(() -> new AppException(ErrorCode.CARTITEM_NOT_FOUND));
+                .orElseThrow(() -> new AppException(ErrorCode.CART_ITEM_NOT_FOUND));
         cartItemRepository.delete(item);
 
         List<CartItem> items = cartItemRepository.findByCart_Id(cart.getId());
