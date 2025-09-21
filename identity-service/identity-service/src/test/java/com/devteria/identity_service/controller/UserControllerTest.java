@@ -130,7 +130,7 @@ public class UserControllerTest {
 
     @Test
     void createUser_phoneNumberInvalid_fail() throws Exception {
-        request.setPhoneNumber("123"); // < 10 ký tự
+        request.setPhoneNumber("123");
 
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)

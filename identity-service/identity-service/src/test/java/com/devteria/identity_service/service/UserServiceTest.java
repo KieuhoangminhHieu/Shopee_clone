@@ -13,6 +13,7 @@ import com.devteria.identity_service.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.Authentication;
@@ -28,8 +29,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
+import org.springframework.security.test.context.support.WithMockUser;
+
 
 @SpringBootTest
+@AutoConfigureMockMvc(addFilters = false)
 public class UserServiceTest {
 
     @Autowired
@@ -122,6 +126,7 @@ public class UserServiceTest {
 
     // ---------- GET USERS ----------
     @Test
+    @WithMockUser(username = "admin", roles = {"ADMIN"})
     void getUsers_success() {
         when(userRepository.findAll()).thenReturn(List.of(user));
 
@@ -133,6 +138,7 @@ public class UserServiceTest {
 
     // ---------- GET USER BY ID ----------
     @Test
+    @WithMockUser(username = "admin", roles = {"ADMIN"})
     void getUser_found_success() {
         when(userRepository.findById("d426bb04a64c")).thenReturn(Optional.of(user));
 
@@ -142,6 +148,7 @@ public class UserServiceTest {
     }
 
     @Test
+    @WithMockUser(username = "admin", roles = {"ADMIN"})
     void getUser_notFound_fail() {
         when(userRepository.findById("not-exist")).thenReturn(Optional.empty());
 
@@ -182,21 +189,23 @@ public class UserServiceTest {
 
     // ---------- UPDATE USER ----------
     @Test
+    @WithMockUser(username = "hieuhoang2903")
     void updateUser_success() {
         UserUpdateRequest updateRequest = UserUpdateRequest.builder()
-                .password("newpass")
-                .roles(List.of("R1"))
+                .password("newpass123")
+                .roles(List.of("ROLE_USER"))
                 .build();
 
         when(userRepository.findById("d426bb04a64c")).thenReturn(Optional.of(user));
-        when(roleRepository.findAllById(List.of("R1"))).thenReturn(List.of(new Role()));
         when(userRepository.save(any(User.class))).thenReturn(user);
+        when(roleRepository.findAllById(any())).thenReturn(List.of());
 
         var result = userService.updateUser("d426bb04a64c", updateRequest);
 
         assertThat(result.getId()).isEqualTo("d426bb04a64c");
-        verify(passwordEncoder).encode("newpass");
+        verify(passwordEncoder).encode("newpass123");
     }
+
 
     @Test
     void updateUser_notFound_fail() {
@@ -211,6 +220,7 @@ public class UserServiceTest {
 
     // ---------- DELETE USER ----------
     @Test
+    @WithMockUser(username = "admin", roles = {"ADMIN"})
     void deleteUser_success() {
         userService.deleteUser("d426bb04a64c");
         verify(userRepository, times(1)).deleteById("d426bb04a64c");

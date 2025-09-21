@@ -2,11 +2,18 @@
 package com.devteria.identity_service.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class ShopUpdateRequest {
     @NotBlank
-    private String shopName;
-    private String description;
+    String shopName;
+    String description;
+    String address;
 }

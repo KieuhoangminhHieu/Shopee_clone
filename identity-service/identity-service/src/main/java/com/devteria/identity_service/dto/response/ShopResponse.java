@@ -13,5 +13,6 @@ public class ShopResponse {
     String id;
     String shopName;
     String description;
+    String address;
     String userId;
 }

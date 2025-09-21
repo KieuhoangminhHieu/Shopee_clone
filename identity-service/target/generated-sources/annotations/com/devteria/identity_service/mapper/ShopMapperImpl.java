@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-09-20T20:01:58+0700",
+    date = "2025-09-21T14:04:03+0700",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.8 (Oracle Corporation)"
 )
 @Component
@@ -23,6 +23,7 @@ public class ShopMapperImpl implements ShopMapper {
 
         Shop shop = new Shop();
 
+        shop.setAddress( request.getAddress() );
         shop.setShopName( request.getShopName() );
         shop.setDescription( request.getDescription() );
 
@@ -40,6 +41,7 @@ public class ShopMapperImpl implements ShopMapper {
         shopResponse.id( shop.getId() );
         shopResponse.shopName( shop.getShopName() );
         shopResponse.description( shop.getDescription() );
+        shopResponse.address( shop.getAddress() );
         shopResponse.userId( shop.getUserId() );
 
         return shopResponse.build();
@@ -53,5 +55,6 @@ public class ShopMapperImpl implements ShopMapper {
 
         shop.setShopName( request.getShopName() );
         shop.setDescription( request.getDescription() );
+        shop.setAddress( request.getAddress() );
     }
 }
