@@ -19,22 +19,31 @@ public class OrderController {
 
     @PostMapping
     public ApiResponse<OrderResponse> createOrder(@RequestBody @Valid OrderRequest request) {
+        OrderResponse response = orderService.createOrder(request);
         return ApiResponse.<OrderResponse>builder()
-                .result(orderService.createOrder(request))
+                .code(200)
+                .message("Tạo đơn hàng thành công")
+                .result(response)
                 .build();
     }
 
     @GetMapping("/{orderId}")
     public ApiResponse<OrderResponse> getOrderById(@PathVariable String orderId) {
+        OrderResponse response = orderService.getOrderById(orderId);
         return ApiResponse.<OrderResponse>builder()
-                .result(orderService.getOrderById(orderId))
+                .code(200)
+                .message("Thông tin đơn hàng")
+                .result(response)
                 .build();
     }
 
     @GetMapping("/user/{userId}")
     public ApiResponse<List<OrderResponse>> getOrdersByUser(@PathVariable String userId) {
+        List<OrderResponse> responses = orderService.getOrdersByUser(userId);
         return ApiResponse.<List<OrderResponse>>builder()
-                .result(orderService.getOrdersByUser(userId))
+                .code(200)
+                .message("Danh sách đơn hàng của người dùng")
+                .result(responses)
                 .build();
     }
 }

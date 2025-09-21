@@ -35,6 +35,9 @@ public class Order {
     @Enumerated(EnumType.STRING)
     OrderStatus status;
 
+    private String voucherCode;
+    private BigDecimal discountAmount; // số tiền được giảm
+
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
 }

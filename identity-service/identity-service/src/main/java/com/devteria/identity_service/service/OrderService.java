@@ -2,7 +2,6 @@ package com.devteria.identity_service.service;
 
 import com.devteria.identity_service.dto.request.OrderRequest;
 import com.devteria.identity_service.dto.request.OrderItemRequest;
-import com.devteria.identity_service.dto.response.OrderItemResponse;
 import com.devteria.identity_service.dto.response.OrderResponse;
 import com.devteria.identity_service.entity.*;
 import com.devteria.identity_service.enums.OrderStatus;
@@ -29,6 +28,7 @@ public class OrderService {
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
     private final OrderMapper orderMapper;
+    private final VoucherService voucherService;
 
     @Transactional
     public OrderResponse createOrder(OrderRequest request) {
@@ -55,10 +55,26 @@ public class OrderService {
             orderItems.add(item);
         }
 
+        BigDecimal discount = BigDecimal.ZERO;
+        String voucherCode = null;
+
+        if (request.getVoucherCode() != null && !request.getVoucherCode().isBlank()) {
+            Voucher voucher = voucherService.validateVoucher(request.getVoucherCode(), total);
+            discount = voucher.getDiscountValue();
+            voucherCode = voucher.getCode();
+
+            total = total.subtract(discount);
+            if (total.compareTo(BigDecimal.ZERO) < 0) {
+                total = BigDecimal.ZERO;
+            }
+        }
+
         Order order = Order.builder()
                 .user(user)
                 .items(new ArrayList<>()) // tạm thời rỗng, sẽ set sau
                 .totalPrice(total)
+                .discountAmount(discount)
+                .voucherCode(voucherCode)
                 .status(OrderStatus.PENDING)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
@@ -66,7 +82,6 @@ public class OrderService {
 
         orderRepository.save(order);
 
-        // gán order cho từng item và lưu
         for (OrderItem item : orderItems) {
             item.setOrder(order);
         }
@@ -86,7 +101,7 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     public List<OrderResponse> getOrdersByUser(String userId) {
-        User user = userRepository.findById(userId)
+        userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
         List<Order> orders = orderRepository.findByUser_Id(userId);

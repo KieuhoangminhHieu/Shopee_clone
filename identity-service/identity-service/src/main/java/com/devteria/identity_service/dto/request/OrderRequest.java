@@ -10,5 +10,6 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class OrderRequest {
     String userId;
+    String voucherCode;
     List<OrderItemRequest> items;
 }

@@ -21,4 +21,6 @@ public class OrderResponse {
     private OrderStatus status;
     private LocalDateTime createdAt;
     private List<OrderItemResponse> items;
+    private String voucherCode;
+    private BigDecimal discountAmount;
 }

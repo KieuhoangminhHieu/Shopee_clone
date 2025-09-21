@@ -10,14 +10,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -62,29 +64,35 @@ class VoucherControllerTest {
     }
 
     @Test
-    void createVoucher_success() throws Exception {
+    @WithMockUser(username = "admin", roles = "ADMIN")
+    void createVoucher_shouldReturnVoucherResponse() throws Exception {
         Mockito.when(voucherService.createVoucher(Mockito.any())).thenReturn(voucherResponse);
 
         mockMvc.perform(post("/vouchers")
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(voucherRequest)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result.code").value("SALE50"))
-                .andExpect(jsonPath("$.result.discountValue").value(50000));
+                .andExpect(jsonPath("$.result.discountValue").value(50000))
+                .andExpect(jsonPath("$.message").value("Tạo voucher thành công"));
     }
 
     @Test
-    void getVoucher_success() throws Exception {
+    @WithMockUser(username = "admin", roles = "ADMIN")
+    void getVoucher_shouldReturnVoucherResponse() throws Exception {
         Mockito.when(voucherService.getVoucherByCode("SALE50")).thenReturn(voucherResponse);
 
         mockMvc.perform(get("/vouchers/SALE50"))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.voucherId").value("voucher123"))
                 .andExpect(jsonPath("$.result.code").value("SALE50"))
-                .andExpect(jsonPath("$.result.voucherId").value("voucher123"));
+                .andExpect(jsonPath("$.message").value("Thông tin voucher"));
     }
 
     @Test
-    void getVoucher_notFound() throws Exception {
+    @WithMockUser(username = "admin", roles = "ADMIN")
+    void getVoucher_shouldReturnError_whenCodeInvalid() throws Exception {
         Mockito.when(voucherService.getVoucherByCode("INVALID"))
                 .thenThrow(new AppException(ErrorCode.INVALID_KEY));
 
