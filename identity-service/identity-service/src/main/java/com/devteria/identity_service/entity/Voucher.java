@@ -1,11 +1,12 @@
 package com.devteria.identity_service.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
+import jakarta.persistence.*;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Entity
 @Table(name = "vouchers")
@@ -30,7 +31,7 @@ public class Voucher {
     BigDecimal minOrderAmount; // điều kiện áp dụng
 
     int usageLimit; // tổng số lần được dùng
-    int usedCount;  // số lần đã dùng
+    int usedCount; // số lần đã dùng
 
     LocalDateTime startDate;
     LocalDateTime endDate;

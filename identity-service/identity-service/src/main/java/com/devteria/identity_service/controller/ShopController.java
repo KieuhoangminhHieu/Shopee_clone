@@ -1,15 +1,18 @@
 package com.devteria.identity_service.controller;
 
+import java.util.List;
+
+import jakarta.validation.Valid;
+
+import org.springframework.web.bind.annotation.*;
+
 import com.devteria.identity_service.dto.request.ShopCreationRequest;
 import com.devteria.identity_service.dto.request.ShopUpdateRequest;
 import com.devteria.identity_service.dto.response.ApiResponse;
 import com.devteria.identity_service.dto.response.ShopResponse;
 import com.devteria.identity_service.service.ShopService;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/shops")
@@ -40,8 +43,8 @@ public class ShopController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<ShopResponse> updateShop(@PathVariable String id,
-                                                @RequestBody @Valid ShopUpdateRequest request) {
+    public ApiResponse<ShopResponse> updateShop(
+            @PathVariable String id, @RequestBody @Valid ShopUpdateRequest request) {
         return ApiResponse.<ShopResponse>builder()
                 .result(shopService.updateShop(id, request))
                 .build();

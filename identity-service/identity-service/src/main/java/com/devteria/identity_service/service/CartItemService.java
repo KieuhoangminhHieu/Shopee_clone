@@ -1,5 +1,11 @@
 package com.devteria.identity_service.service;
 
+import java.math.BigDecimal;
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.devteria.identity_service.dto.request.CartItemRequest;
 import com.devteria.identity_service.dto.response.CartItemResponse;
 import com.devteria.identity_service.entity.Cart;
@@ -13,12 +19,8 @@ import com.devteria.identity_service.repository.CartItemRepository;
 import com.devteria.identity_service.repository.CartRepository;
 import com.devteria.identity_service.repository.ProductRepository;
 import com.devteria.identity_service.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.util.List;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -32,8 +34,7 @@ public class CartItemService {
 
     @Transactional
     public CartItemResponse addOrUpdateCartItemByUser(String userId, CartItemRequest request) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
         Cart cart = cartRepository.findByUser_Id(userId).orElseGet(() -> {
             Cart c = new Cart();
@@ -47,13 +48,13 @@ public class CartItemService {
 
     @Transactional
     public CartItemResponse addOrUpdateCartItemByCartId(String cartId, CartItemRequest request) {
-        Cart cart = cartRepository.findById(cartId)
-                .orElseThrow(() -> new AppException(ErrorCode.CART_NOT_FOUND));
+        Cart cart = cartRepository.findById(cartId).orElseThrow(() -> new AppException(ErrorCode.CART_NOT_FOUND));
         return addOrUpdateCartItem(cart, request);
     }
 
     private CartItemResponse addOrUpdateCartItem(Cart cart, CartItemRequest request) {
-        Product product = productRepository.findById(request.getProductId())
+        Product product = productRepository
+                .findById(request.getProductId())
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
 
         // existing item?
@@ -74,9 +75,7 @@ public class CartItemService {
 
         // recalc cart total from DB to be safe
         List<CartItem> items = cartItemRepository.findByCart_Id(cart.getId());
-        BigDecimal total = items.stream()
-                .map(CartItem::getSubTotal)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal total = items.stream().map(CartItem::getSubTotal).reduce(BigDecimal.ZERO, BigDecimal::add);
 
         cart.setTotalPrice(total);
         cartRepository.save(cart);
@@ -86,27 +85,24 @@ public class CartItemService {
 
     @Transactional
     public void removeCartItemByUser(String userId, String productId) {
-        Cart cart = cartRepository.findByUser_Id(userId)
-                .orElseThrow(() -> new AppException(ErrorCode.CART_NOT_FOUND));
+        Cart cart = cartRepository.findByUser_Id(userId).orElseThrow(() -> new AppException(ErrorCode.CART_NOT_FOUND));
         removeCartItemFromCart(cart, productId);
     }
 
     @Transactional
     public void removeCartItemByCartId(String cartId, String productId) {
-        Cart cart = cartRepository.findById(cartId)
-                .orElseThrow(() -> new AppException(ErrorCode.CART_NOT_FOUND));
+        Cart cart = cartRepository.findById(cartId).orElseThrow(() -> new AppException(ErrorCode.CART_NOT_FOUND));
         removeCartItemFromCart(cart, productId);
     }
 
     private void removeCartItemFromCart(Cart cart, String productId) {
-        CartItem item = cartItemRepository.findByCart_IdAndProduct_Id(cart.getId(), productId)
+        CartItem item = cartItemRepository
+                .findByCart_IdAndProduct_Id(cart.getId(), productId)
                 .orElseThrow(() -> new AppException(ErrorCode.CART_ITEM_NOT_FOUND));
         cartItemRepository.delete(item);
 
         List<CartItem> items = cartItemRepository.findByCart_Id(cart.getId());
-        BigDecimal total = items.stream()
-                .map(CartItem::getSubTotal)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal total = items.stream().map(CartItem::getSubTotal).reduce(BigDecimal.ZERO, BigDecimal::add);
 
         cart.setTotalPrice(total);
         cartRepository.save(cart);

@@ -1,7 +1,15 @@
 package com.devteria.identity_service.service;
 
-import com.devteria.identity_service.dto.request.OrderRequest;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.devteria.identity_service.dto.request.OrderItemRequest;
+import com.devteria.identity_service.dto.request.OrderRequest;
 import com.devteria.identity_service.dto.response.OrderResponse;
 import com.devteria.identity_service.entity.*;
 import com.devteria.identity_service.enums.OrderStatus;
@@ -11,14 +19,8 @@ import com.devteria.identity_service.mapper.OrderMapper;
 import com.devteria.identity_service.repository.OrderRepository;
 import com.devteria.identity_service.repository.ProductRepository;
 import com.devteria.identity_service.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -32,14 +34,16 @@ public class OrderService {
 
     @Transactional
     public OrderResponse createOrder(OrderRequest request) {
-        User user = userRepository.findById(request.getUserId())
+        User user = userRepository
+                .findById(request.getUserId())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
         List<OrderItem> orderItems = new ArrayList<>();
         BigDecimal total = BigDecimal.ZERO;
 
         for (OrderItemRequest itemRequest : request.getItems()) {
-            Product product = productRepository.findById(itemRequest.getProductId())
+            Product product = productRepository
+                    .findById(itemRequest.getProductId())
                     .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
 
             BigDecimal subTotal = itemRequest.getPrice().multiply(BigDecimal.valueOf(itemRequest.getQuantity()));
@@ -94,19 +98,15 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     public OrderResponse getOrderById(String orderId) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
         return orderMapper.toOrderResponse(order);
     }
 
     @Transactional(readOnly = true)
     public List<OrderResponse> getOrdersByUser(String userId) {
-        userRepository.findById(userId)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
         List<Order> orders = orderRepository.findByUser_Id(userId);
-        return orders.stream()
-                .map(orderMapper::toOrderResponse)
-                .toList();
+        return orders.stream().map(orderMapper::toOrderResponse).toList();
     }
 }

@@ -1,13 +1,15 @@
 package com.devteria.identity_service.controller;
 
-import com.devteria.identity_service.dto.request.ProductRequest;
-import com.devteria.identity_service.dto.response.ProductResponse;
-import com.devteria.identity_service.service.ProductService;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import com.devteria.identity_service.dto.request.ProductRequest;
+import com.devteria.identity_service.dto.response.ProductResponse;
+import com.devteria.identity_service.service.ProductService;
+
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/products")
@@ -32,8 +34,7 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProductResponse> updateProduct(@PathVariable String id,
-                                                         @RequestBody ProductRequest request) {
+    public ResponseEntity<ProductResponse> updateProduct(@PathVariable String id, @RequestBody ProductRequest request) {
         return ResponseEntity.ok(productService.updateProduct(id, request));
     }
 

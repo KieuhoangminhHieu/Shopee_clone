@@ -1,9 +1,9 @@
 package com.devteria.identity_service.dto.response;
 
-import lombok.Data;
-
 import java.math.BigDecimal;
 import java.util.List;
+
+import lombok.Data;
 
 @Data
 public class CartResponse {

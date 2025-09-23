@@ -1,5 +1,11 @@
 package com.devteria.identity_service.service;
 
+import java.util.List;
+
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+
 import com.devteria.identity_service.dto.request.ShopCreationRequest;
 import com.devteria.identity_service.dto.request.ShopUpdateRequest;
 import com.devteria.identity_service.dto.response.ShopResponse;
@@ -9,15 +15,11 @@ import com.devteria.identity_service.exception.ErrorCode;
 import com.devteria.identity_service.mapper.ShopMapper;
 import com.devteria.identity_service.repository.ShopRepository;
 import com.devteria.identity_service.repository.UserRepository;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +33,8 @@ public class ShopService {
 
     private String getCurrentUserId() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        return userRepository.findByUsername(username)
+        return userRepository
+                .findByUsername(username)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND))
                 .getId();
     }
@@ -51,19 +54,16 @@ public class ShopService {
 
     @PreAuthorize("hasRole('ADMIN')")
     public List<ShopResponse> getShops() {
-        return shopRepository.findAll().stream()
-                .map(shopMapper::toResponse)
-                .toList();
+        return shopRepository.findAll().stream().map(shopMapper::toResponse).toList();
     }
 
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ShopResponse getShopById(String id) {
-        Shop shop = shopRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.INVALID_KEY));
+        Shop shop = shopRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.INVALID_KEY));
 
         String currentUserId = getCurrentUserId();
-        if (!shop.getUserId().equals(currentUserId) &&
-                SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
+        if (!shop.getUserId().equals(currentUserId)
+                && SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
                         .noneMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
             throw new AppException(ErrorCode.UNAUTHORIZED);
         }
@@ -73,12 +73,11 @@ public class ShopService {
 
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ShopResponse updateShop(String id, ShopUpdateRequest request) {
-        Shop shop = shopRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.INVALID_KEY));
+        Shop shop = shopRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.INVALID_KEY));
 
         String currentUserId = getCurrentUserId();
-        if (!shop.getUserId().equals(currentUserId) &&
-                SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
+        if (!shop.getUserId().equals(currentUserId)
+                && SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
                         .noneMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
             throw new AppException(ErrorCode.UNAUTHORIZED);
         }
@@ -93,12 +92,11 @@ public class ShopService {
 
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public void deleteShop(String id) {
-        Shop shop = shopRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.INVALID_KEY));
+        Shop shop = shopRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.INVALID_KEY));
 
         String currentUserId = getCurrentUserId();
-        if (!shop.getUserId().equals(currentUserId) &&
-                SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
+        if (!shop.getUserId().equals(currentUserId)
+                && SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
                         .noneMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
             throw new AppException(ErrorCode.UNAUTHORIZED);
         }

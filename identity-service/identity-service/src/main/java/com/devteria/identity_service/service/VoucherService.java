@@ -1,5 +1,10 @@
 package com.devteria.identity_service.service;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+import org.springframework.stereotype.Service;
+
 import com.devteria.identity_service.dto.request.VoucherRequest;
 import com.devteria.identity_service.dto.response.VoucherResponse;
 import com.devteria.identity_service.entity.Voucher;
@@ -7,11 +12,8 @@ import com.devteria.identity_service.exception.AppException;
 import com.devteria.identity_service.exception.ErrorCode;
 import com.devteria.identity_service.mapper.VoucherMapper;
 import com.devteria.identity_service.repository.VoucherRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -38,14 +40,12 @@ public class VoucherService {
     }
 
     public VoucherResponse getVoucherByCode(String code) {
-        Voucher voucher = voucherRepository.findByCode(code)
-                .orElseThrow(() -> new AppException(ErrorCode.INVALID_KEY));
+        Voucher voucher = voucherRepository.findByCode(code).orElseThrow(() -> new AppException(ErrorCode.INVALID_KEY));
         return voucherMapper.toResponse(voucher);
     }
 
     public Voucher validateVoucher(String code, BigDecimal orderAmount) {
-        Voucher voucher = voucherRepository.findByCode(code)
-                .orElseThrow(() -> new AppException(ErrorCode.INVALID_KEY));
+        Voucher voucher = voucherRepository.findByCode(code).orElseThrow(() -> new AppException(ErrorCode.INVALID_KEY));
 
         if (!voucher.isActive()
                 || voucher.getUsedCount() >= voucher.getUsageLimit()

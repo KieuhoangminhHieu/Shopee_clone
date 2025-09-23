@@ -1,13 +1,14 @@
 package com.devteria.identity_service.mapper;
 
+import java.util.List;
+
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+
 import com.devteria.identity_service.dto.response.OrderItemResponse;
 import com.devteria.identity_service.dto.response.OrderResponse;
 import com.devteria.identity_service.entity.Order;
 import com.devteria.identity_service.entity.OrderItem;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-
-import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface OrderMapper {

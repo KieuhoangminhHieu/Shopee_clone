@@ -1,9 +1,10 @@
 package com.devteria.identity_service.repository;
 
-import com.devteria.identity_service.entity.Cart;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Optional;
+import com.devteria.identity_service.entity.Cart;
 
 public interface CartRepository extends JpaRepository<Cart, String> {
     Optional<Cart> findByUser_Id(String userId);

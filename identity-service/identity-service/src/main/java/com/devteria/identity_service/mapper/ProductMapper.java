@@ -1,11 +1,12 @@
 package com.devteria.identity_service.mapper;
 
-import com.devteria.identity_service.dto.request.ProductRequest;
-import com.devteria.identity_service.dto.response.ProductResponse;
-import com.devteria.identity_service.entity.Product;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+
+import com.devteria.identity_service.dto.request.ProductRequest;
+import com.devteria.identity_service.dto.response.ProductResponse;
+import com.devteria.identity_service.entity.Product;
 
 @Mapper(componentModel = "spring")
 public interface ProductMapper {
@@ -23,4 +24,3 @@ public interface ProductMapper {
     @Mapping(target = "category", ignore = true)
     void updateEntityFromDto(ProductRequest request, @MappingTarget Product product);
 }
-

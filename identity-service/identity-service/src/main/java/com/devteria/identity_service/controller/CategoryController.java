@@ -1,12 +1,14 @@
 package com.devteria.identity_service.controller;
 
+import java.util.List;
+
+import org.springframework.web.bind.annotation.*;
+
 import com.devteria.identity_service.dto.request.CategoryRequest;
 import com.devteria.identity_service.dto.response.CategoryResponse;
 import com.devteria.identity_service.service.CategoryService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/categories")

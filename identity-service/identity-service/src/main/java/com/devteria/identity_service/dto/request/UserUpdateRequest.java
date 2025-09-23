@@ -3,9 +3,11 @@ package com.devteria.identity_service.dto.request;
 import java.time.LocalDate;
 import java.util.List;
 
-import com.devteria.identity_service.validator.DobConstraint;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
+
+import com.devteria.identity_service.validator.DobConstraint;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -23,7 +25,8 @@ public class UserUpdateRequest {
 
     @Size(min = 8, message = "INVALID_PASSWORD")
     String password;
-    @DobConstraint(min =18, message = "INVALID_DOB")
+
+    @DobConstraint(min = 18, message = "INVALID_DOB")
     LocalDate dob;
 
     @Email(message = "INVALID_EMAIL")

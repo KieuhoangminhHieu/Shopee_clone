@@ -1,10 +1,9 @@
 package com.devteria.identity_service.dto.request;
 
-import jakarta.validation.constraints.AssertFalse;
+import java.util.Set;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.Set;
 
 @Data
 @NoArgsConstructor

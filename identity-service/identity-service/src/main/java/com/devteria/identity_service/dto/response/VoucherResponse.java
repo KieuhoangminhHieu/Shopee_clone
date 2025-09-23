@@ -1,10 +1,10 @@
 package com.devteria.identity_service.dto.response;
 
-import lombok.Builder;
-import lombok.Data;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
+import lombok.Builder;
+import lombok.Data;
 
 @Data
 @Builder

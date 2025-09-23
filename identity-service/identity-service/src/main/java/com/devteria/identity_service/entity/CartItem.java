@@ -1,9 +1,10 @@
 package com.devteria.identity_service.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
-
 import java.math.BigDecimal;
+
+import jakarta.persistence.*;
+
+import lombok.*;
 
 @Entity
 @Getter

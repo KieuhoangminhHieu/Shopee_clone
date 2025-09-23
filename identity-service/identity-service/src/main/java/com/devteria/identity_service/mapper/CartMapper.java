@@ -1,14 +1,15 @@
 package com.devteria.identity_service.mapper;
 
-import com.devteria.identity_service.dto.response.CartItemResponse;
-import com.devteria.identity_service.dto.response.CartResponse;
-import com.devteria.identity_service.entity.Cart;
-import com.devteria.identity_service.entity.CartItem;
+import java.util.List;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
-import java.util.List;
+import com.devteria.identity_service.dto.response.CartItemResponse;
+import com.devteria.identity_service.dto.response.CartResponse;
+import com.devteria.identity_service.entity.Cart;
+import com.devteria.identity_service.entity.CartItem;
 
 @Mapper(componentModel = "spring")
 public interface CartMapper {

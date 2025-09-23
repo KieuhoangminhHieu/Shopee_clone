@@ -1,12 +1,15 @@
 package com.devteria.identity_service.controller;
 
+import jakarta.validation.Valid;
+
+import org.springframework.web.bind.annotation.*;
+
 import com.devteria.identity_service.dto.request.CartItemRequest;
 import com.devteria.identity_service.dto.response.ApiResponse;
 import com.devteria.identity_service.dto.response.CartItemResponse;
 import com.devteria.identity_service.service.CartItemService;
-import jakarta.validation.Valid;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping
@@ -18,8 +21,7 @@ public class CartItemController {
     // add/update by userId (auto create cart)
     @PostMapping("/carts/{userId}/items")
     public ApiResponse<CartItemResponse> addOrUpdateByUser(
-            @PathVariable String userId,
-            @RequestBody @Valid CartItemRequest request) {
+            @PathVariable String userId, @RequestBody @Valid CartItemRequest request) {
         return ApiResponse.<CartItemResponse>builder()
                 .result(cartItemService.addOrUpdateCartItemByUser(userId, request))
                 .build();
@@ -28,8 +30,7 @@ public class CartItemController {
     // add/update by cartId (if you prefer to provide cartId)
     @PostMapping("/cart-items")
     public ApiResponse<CartItemResponse> addOrUpdateByCartId(
-            @RequestParam String cartId,
-            @RequestBody @Valid CartItemRequest request) {
+            @RequestParam String cartId, @RequestBody @Valid CartItemRequest request) {
         return ApiResponse.<CartItemResponse>builder()
                 .result(cartItemService.addOrUpdateCartItemByCartId(cartId, request))
                 .build();

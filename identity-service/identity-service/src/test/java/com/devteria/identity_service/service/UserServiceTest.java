@@ -1,32 +1,28 @@
 package com.devteria.identity_service.service;
 
-import com.devteria.identity_service.dto.request.UserCreationRequest;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
-import com.devteria.identity_service.dto.request.UserUpdateRequest;
-import com.devteria.identity_service.dto.response.UserResponse;
-import com.devteria.identity_service.entity.User;
-import com.devteria.identity_service.exception.AppException;
-import com.devteria.identity_service.repository.UserRepository;
+import java.time.LocalDate;
+import java.util.*;
+
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-
-import java.time.LocalDate;
-import java.util.*;
-
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
-
 import org.springframework.transaction.annotation.Transactional;
 
+import com.devteria.identity_service.dto.request.UserCreationRequest;
+import com.devteria.identity_service.dto.request.UserUpdateRequest;
+import com.devteria.identity_service.dto.response.UserResponse;
+import com.devteria.identity_service.entity.User;
+import com.devteria.identity_service.exception.AppException;
+import com.devteria.identity_service.repository.UserRepository;
 
 @SpringBootTest
 @TestPropertySource("/test.properties")
@@ -36,6 +32,7 @@ public class UserServiceTest {
 
     @MockitoBean
     private UserRepository userRepository;
+
     private UserCreationRequest request;
     private UserResponse userResponse;
     private User user;
@@ -82,29 +79,27 @@ public class UserServiceTest {
     @Transactional
     @Test
     void createUser_validRequest_success() {
-        //GIVEN
+        // GIVEN
         when(userRepository.existsByUsername(user.getUsername())).thenReturn(false);
         when(userRepository.save(any())).thenReturn(user);
-        //WHEN
+        // WHEN
         var response = userService.createUser(request);
-        //THEN
+        // THEN
         Assertions.assertThat(response.getId()).isEqualTo("d426bb04a64c");
         Assertions.assertThat(response.getUsername()).isEqualTo("hieuhoang2903");
     }
 
     @Transactional
     @Test
-
     void createUser_validRequest_fail() {
-        //GIVEN
+        // GIVEN
         when(userRepository.existsByUsername(anyString())).thenReturn(true);
-        //WHEN
-        var exception = assertThrows(AppException.class,
-                () -> userService.createUser(request));
-        //THEN
+        // WHEN
+        var exception = assertThrows(AppException.class, () -> userService.createUser(request));
+        // THEN
         Assertions.assertThat(exception.getErrorCode().getCode()).isEqualTo(1001);
-
     }
+
     @Test
     @WithMockUser(username = "hieuhoang2903")
     void getMyInfo_valid_success() {
@@ -115,16 +110,17 @@ public class UserServiceTest {
         Assertions.assertThat(response.getUsername()).isEqualTo("hieuhoang2903");
         Assertions.assertThat(response.getId()).isEqualTo("d426bb04a64c");
     }
+
     @Test
     @WithMockUser(username = "hieuhoang2903")
     void getMyInfo_userNotFound_error() {
         when(userRepository.findByUsername(anyString())).thenReturn(Optional.ofNullable(null));
 
-        var exception = assertThrows(AppException.class,
-                () -> userService.getMyInfo());
+        var exception = assertThrows(AppException.class, () -> userService.getMyInfo());
 
         Assertions.assertThat(exception.getErrorCode().getCode()).isEqualTo(1004);
     }
+
     @Test
     @WithMockUser(roles = "ADMIN")
     void getUsers_valid_success() {
@@ -151,12 +147,10 @@ public class UserServiceTest {
     void getUser_notFound_error() {
         when(userRepository.findById(anyString())).thenReturn(Optional.empty());
 
-        var exception = assertThrows(AppException.class,
-                () -> userService.getUser("invalid-id"));
+        var exception = assertThrows(AppException.class, () -> userService.getUser("invalid-id"));
 
         Assertions.assertThat(exception.getErrorCode().getCode()).isEqualTo(1004);
     }
-
 
     @Test
     @WithMockUser(username = "hieuhoang2903")
@@ -166,8 +160,7 @@ public class UserServiceTest {
 
         when(userRepository.findById(anyString())).thenReturn(Optional.empty());
 
-        var exception = assertThrows(AppException.class,
-                () -> userService.updateUser("invalid-id", updateRequest));
+        var exception = assertThrows(AppException.class, () -> userService.updateUser("invalid-id", updateRequest));
 
         Assertions.assertThat(exception.getErrorCode().getCode()).isEqualTo(1004);
     }
