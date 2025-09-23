@@ -38,20 +38,16 @@ public class UserService {
 
     public UserResponse createUser(UserCreationRequest request) {
         log.info("Service: Create User");
-        User user = userMapper.toUser(request);
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-
-        HashSet<Role> roles = new HashSet<>();
-        roleRepository.findById(PredefinedRole.USER_ROLE).ifPresent(roles::add);
-
-        user.setRoles(roles);
-
-        try {
-            user = userRepository.save(user);
-        } catch (DataIntegrityViolationException exception) {
+        if (userRepository.existsByUsername(request.getUsername())) {
             throw new AppException(ErrorCode.USER_EXISTED);
         }
+        User user = userMapper.toUser(request);
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        HashSet<Role> roles = new HashSet<>();
+        roleRepository.findById(PredefinedRole.USER_ROLE).ifPresent(roles::add);
+        user.setRoles(roles);
 
+        user = userRepository.save(user);
         return userMapper.toUserResponse(user);
     }
 

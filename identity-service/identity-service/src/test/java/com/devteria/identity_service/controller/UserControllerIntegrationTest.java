@@ -3,26 +3,24 @@ package com.devteria.identity_service.controller;
 import com.devteria.identity_service.dto.request.UserCreationRequest;
 import com.devteria.identity_service.dto.request.UserUpdateRequest;
 import com.devteria.identity_service.dto.response.UserResponse;
-import com.devteria.identity_service.enums.Role;
-import com.devteria.identity_service.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -32,14 +30,24 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @SpringBootTest
 @Slf4j
 @AutoConfigureMockMvc
-@TestPropertySource("/test.properties")
-public class UserControllerTest {
+@Testcontainers
+public class UserControllerIntegrationTest {
+    @Container
+    static final MySQLContainer<?> MY_SQL_CONTAINER = new MySQLContainer<>("mysql:8.0");
+
+    @DynamicPropertySource
+    static void configureDatasource(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", MY_SQL_CONTAINER::getJdbcUrl);
+        registry.add("spring.datasource.username", MY_SQL_CONTAINER::getUsername);
+        registry.add("spring.datasource.password", MY_SQL_CONTAINER::getPassword);
+        registry.add("spring.datasource.driver-class-name", () -> "com.mysql.cj.jdbc.Driver");
+        registry.add("spring.jpa.hibernate.ddl-auto", () -> "update");
+    }
+
 
     @Autowired
     private MockMvc mockMvc;
 
-    @MockitoBean
-    private UserService userService;
 
     private UserCreationRequest request;
     private UserResponse userResponse;
@@ -83,16 +91,17 @@ public class UserControllerTest {
         objectMapper.registerModule(new JavaTimeModule());
         String content = objectMapper.writeValueAsString(request);
 
-        Mockito.when(userService.createUser(ArgumentMatchers.any()))
-                .thenReturn(userResponse);
         //WHEN, THEN
-        mockMvc.perform(MockMvcRequestBuilders
+        var response = mockMvc.perform(MockMvcRequestBuilders
                         .post("/users")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(content))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("code").value("200"))
-                .andExpect(MockMvcResultMatchers.jsonPath("result.id").value("d426bb04a64c"));
+                .andExpect(MockMvcResultMatchers.jsonPath("result.firstName").value("Hiếu"))
+                .andExpect(MockMvcResultMatchers.jsonPath("result.lastName").value("Hoàng"))
+                .andExpect(MockMvcResultMatchers.jsonPath("result.username").value("hieuhoang2903"));
+        log.info("Result: {}", response.andReturn().getResponse().getContentAsString());
     }
 
     @Test
@@ -143,7 +152,6 @@ public class UserControllerTest {
     @Test
     @WithMockUser(roles = "ADMIN")
     void getUsers_success() throws Exception {
-        Mockito.when(userService.getUsers()).thenReturn(List.of(userResponse));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/users"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -154,7 +162,6 @@ public class UserControllerTest {
     @Test
     @WithMockUser(username = "hieuhoang2903")
     void getUser_success() throws Exception {
-        Mockito.when(userService.getUser("d426bb04a64c")).thenReturn(userResponse);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/users/d426bb04a64c"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -171,8 +178,6 @@ public class UserControllerTest {
 
         String content = objectMapper.writeValueAsString(updateRequest);
 
-        Mockito.when(userService.updateUser((Mockito.eq("d426bb04a64c")), ArgumentMatchers.any()))
-                .thenReturn(userResponse);
         mockMvc.perform(MockMvcRequestBuilders.put("/users/d426bb04a64c")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(content))
@@ -184,7 +189,6 @@ public class UserControllerTest {
     @Test
     @WithMockUser(roles = "ADMIN")
     void deleteUser_success() throws Exception {
-        Mockito.doNothing().when(userService).deleteUser("d426bb04a64c");
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/users/d426bb04a64c"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -194,7 +198,6 @@ public class UserControllerTest {
     @Test
     @WithMockUser(username = "hieuhoang2903")
     void getMyInfo_success() throws Exception {
-        Mockito.when(userService.getMyInfo()).thenReturn(userResponse);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/users/myInfo"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
