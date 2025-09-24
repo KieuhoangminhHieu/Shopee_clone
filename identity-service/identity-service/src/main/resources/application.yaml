@@ -18,3 +18,6 @@ jwt:
   signerKey: "LWqlzG1wE66gSkkzE3TSmL+1OFuc+d7BrrVdMnjLtWqSroJFKZq8fiNVHRuDcd4Y\n"
   valid-duration: 3600
   refreshable-duration: 86400
+
+admin:
+  default-password: "admin"

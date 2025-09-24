@@ -27,11 +27,9 @@ public class CartItem {
 
     private int quantity;
 
-    // snapshot price tại thời điểm thêm (BigDecimal)
     @Column(nullable = false, precision = 19, scale = 2)
     private BigDecimal price;
 
-    // price * quantity
     @Column(nullable = false, precision = 19, scale = 2)
     private BigDecimal subTotal;
 }

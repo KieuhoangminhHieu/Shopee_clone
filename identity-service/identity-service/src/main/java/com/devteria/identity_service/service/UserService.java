@@ -3,6 +3,8 @@ package com.devteria.identity_service.service;
 import java.util.HashSet;
 import java.util.List;
 
+import jakarta.transaction.Transactional;
+
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -36,6 +38,7 @@ public class UserService {
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
 
+    @Transactional
     public UserResponse createUser(UserCreationRequest request) {
         log.info("Service: Create User");
         if (userRepository.existsByUsername(request.getUsername())) {
@@ -51,12 +54,14 @@ public class UserService {
         return userMapper.toUserResponse(user);
     }
 
+    @Transactional
     @PreAuthorize("hasRole('ADMIN')")
     public List<UserResponse> getUsers() {
         log.info("In method get Users");
         return userRepository.findAll().stream().map(userMapper::toUserResponse).toList();
     }
 
+    @Transactional
     @PreAuthorize("hasRole('ADMIN')")
     public UserResponse getUser(String id) {
         log.info("In method get user by Id");
@@ -64,6 +69,7 @@ public class UserService {
                 userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND)));
     }
 
+    @Transactional
     @PostAuthorize("returnObject.username == authentication.name")
     public UserResponse getMyInfo() {
         var context = SecurityContextHolder.getContext();
@@ -73,6 +79,7 @@ public class UserService {
         return userMapper.toUserResponse(user);
     }
 
+    @Transactional
     @PostAuthorize("returnObject.username == authentication.name")
     public UserResponse updateUser(String userId, UserUpdateRequest request) {
         User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
@@ -86,6 +93,7 @@ public class UserService {
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
+    @Transactional
     @PreAuthorize("hasRole('ADMIN')")
     public void deleteUser(String userId) {
         userRepository.deleteById(userId);

@@ -2,9 +2,12 @@ package com.devteria.identity_service.exception;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import jakarta.validation.ConstraintViolation;
+import jakarta.validation.metadata.ConstraintDescriptor;
 
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -22,9 +25,9 @@ public class GlobalExceptionHandler {
     private static final String MIN_ATTRIBUTE = "min";
 
     @ExceptionHandler(value = Exception.class)
-    ResponseEntity<ApiResponse> handlingRuntimeException(RuntimeException exception) {
+    ResponseEntity<ApiResponse<Void>> handlingRuntimeException(RuntimeException exception) {
         log.error("Exception: ", exception);
-        ApiResponse apiResponse = new ApiResponse();
+        ApiResponse<Void> apiResponse = new ApiResponse<>();
 
         apiResponse.setCode(ErrorCode.UNCATEGORIZED_EXISTED.getCode());
         apiResponse.setMessage(ErrorCode.UNCATEGORIZED_EXISTED.getMessage());
@@ -33,9 +36,9 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(value = AppException.class)
-    ResponseEntity<ApiResponse> handlingAppException(AppException exception) {
+    ResponseEntity<ApiResponse<Void>> handlingAppException(AppException exception) {
         ErrorCode errorCode = exception.getErrorCode();
-        ApiResponse apiResponse = new ApiResponse();
+        ApiResponse<Void> apiResponse = new ApiResponse<>();
 
         apiResponse.setCode(errorCode.getCode());
         apiResponse.setMessage(errorCode.getMessage());
@@ -44,37 +47,42 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(value = AccessDeniedException.class)
-    ResponseEntity<ApiResponse> handlingAccessDeniedException(AccessDeniedException exception) {
+    ResponseEntity<ApiResponse<Void>> handlingAccessDeniedException(AccessDeniedException exception) {
         ErrorCode errorCode = ErrorCode.UNAUTHORIZED;
 
         return ResponseEntity.status(errorCode.getStatusCode())
-                .body(ApiResponse.builder()
+                .body(ApiResponse.<Void>builder()
                         .code(errorCode.getCode())
                         .message(errorCode.getMessage())
                         .build());
     }
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
-    ResponseEntity<ApiResponse> handlingValidation(MethodArgumentNotValidException exception) {
-        String enumKey = exception.getFieldError().getDefaultMessage();
+    ResponseEntity<ApiResponse<Void>> handlingValidation(MethodArgumentNotValidException exception) {
+        String enumKey = Optional.ofNullable(exception.getFieldError())
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .orElse(null);
 
         ErrorCode errorCode = ErrorCode.INVALID_KEY;
         Map<String, Object> attributes = null;
         try {
             errorCode = ErrorCode.valueOf(enumKey);
 
-            var constraintViolation =
+            ConstraintViolation<?> constraintViolation =
                     exception.getBindingResult().getAllErrors().getFirst().unwrap(ConstraintViolation.class);
+            ConstraintDescriptor<?> descriptor = constraintViolation.getConstraintDescriptor();
 
-            attributes = constraintViolation.getConstraintDescriptor().getAttributes();
+            attributes = descriptor.getAttributes();
 
             log.info(attributes.toString());
 
         } catch (IllegalArgumentException e) {
-
+            log.warn("Invalid error code: {}", enumKey);
+        } catch (Exception e) {
+            log.warn("Unable to extract constraint attributes", e);
         }
 
-        ApiResponse apiResponse = new ApiResponse();
+        ApiResponse<Void> apiResponse = new ApiResponse<>();
 
         apiResponse.setCode(errorCode.getCode());
         apiResponse.setMessage(

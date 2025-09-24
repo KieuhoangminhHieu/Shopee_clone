@@ -31,7 +31,7 @@ public class Shipping {
     private String receiverPhone;
 
     @Column(nullable = false)
-    private String shippingMethod; // STANDARD, EXPRESS...
+    private String shippingMethod;
 
     private String trackingNumber;
 

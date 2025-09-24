@@ -102,7 +102,6 @@ public class ProductService {
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public void deleteProduct(String id) {
         Product product = productRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.INVALID_KEY));
-
         String currentUserId = getCurrentUserId();
         if (!product.getShop().getUserId().equals(currentUserId)
                 && SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()

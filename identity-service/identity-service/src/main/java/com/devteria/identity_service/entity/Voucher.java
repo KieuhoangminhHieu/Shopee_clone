@@ -26,12 +26,12 @@ public class Voucher {
 
     String description;
 
-    BigDecimal discountValue; // số tiền giảm
+    BigDecimal discountValue;
 
-    BigDecimal minOrderAmount; // điều kiện áp dụng
+    BigDecimal minOrderAmount;
 
-    int usageLimit; // tổng số lần được dùng
-    int usedCount; // số lần đã dùng
+    int usageLimit;
+    int usedCount;
 
     LocalDateTime startDate;
     LocalDateTime endDate;

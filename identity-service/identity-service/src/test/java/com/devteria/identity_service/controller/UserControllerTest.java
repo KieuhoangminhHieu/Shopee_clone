@@ -33,7 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @AutoConfigureMockMvc
 @TestPropertySource("/test.properties")
-public class UserControllerTest {
+class UserControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -44,7 +44,6 @@ public class UserControllerTest {
     private UserCreationRequest request;
     private UserResponse userResponse;
     private LocalDate dob;
-
     private ObjectMapper objectMapper;
 
     @BeforeEach

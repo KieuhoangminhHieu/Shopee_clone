@@ -6,9 +6,7 @@ import jakarta.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 @Entity
@@ -18,14 +16,14 @@ import lombok.experimental.FieldDefaults;
 public class Shop {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+    String id;
 
-    private String shopName;
-    private String description;
-    private String userId;
-    private String address;
+    String shopName;
+    String description;
+    String userId;
+    String address;
 
     @OneToMany(mappedBy = "shop")
     @JsonIgnore
-    private List<Product> products;
+    List<Product> products;
 }

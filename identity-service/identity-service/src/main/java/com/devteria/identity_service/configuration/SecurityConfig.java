@@ -1,6 +1,5 @@
 package com.devteria.identity_service.configuration;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -18,17 +17,21 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
-    private final String[] PUBLIC_ENDPOINTS = {
+
+    private final CustomJwtDecoder customJwtDecoder;
+
+    private final String[] publicEndpoints = {
         "/auth/token", "/auth/introspect", "/users", "/auth/logout", "/auth/refresh"
     };
 
-    @Autowired
-    private CustomJwtDecoder customJwtDecoder;
+    public SecurityConfig(CustomJwtDecoder customJwtDecoder) {
+        this.customJwtDecoder = customJwtDecoder;
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
 
-        httpSecurity.authorizeHttpRequests(request -> request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS)
+        httpSecurity.authorizeHttpRequests(request -> request.requestMatchers(HttpMethod.POST, publicEndpoints)
                 .permitAll()
                 .anyRequest()
                 .authenticated());

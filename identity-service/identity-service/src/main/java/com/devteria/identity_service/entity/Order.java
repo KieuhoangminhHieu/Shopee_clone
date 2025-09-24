@@ -38,7 +38,7 @@ public class Order {
     OrderStatus status;
 
     private String voucherCode;
-    private BigDecimal discountAmount; // số tiền được giảm
+    private BigDecimal discountAmount;
 
     LocalDateTime createdAt;
     LocalDateTime updatedAt;

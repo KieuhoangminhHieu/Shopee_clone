@@ -19,14 +19,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.devteria.identity_service.dto.request.UserCreationRequest;
 import com.devteria.identity_service.dto.request.UserUpdateRequest;
-import com.devteria.identity_service.dto.response.UserResponse;
 import com.devteria.identity_service.entity.User;
 import com.devteria.identity_service.exception.AppException;
 import com.devteria.identity_service.repository.UserRepository;
 
 @SpringBootTest
 @TestPropertySource("/test.properties")
-public class UserServiceTest {
+class UserServiceTest {
     @Autowired
     private UserService userService;
 
@@ -34,30 +33,17 @@ public class UserServiceTest {
     private UserRepository userRepository;
 
     private UserCreationRequest request;
-    private UserResponse userResponse;
     private User user;
-    private LocalDate dob;
 
     @BeforeEach
     void initData() {
-        dob = LocalDate.of(2003, 3, 3);
+        LocalDate dob = LocalDate.of(2003, 3, 3);
 
         request = UserCreationRequest.builder()
                 .firstName("Hiếu")
                 .lastName("Hoàng")
                 .username("hieuhoang2903")
                 .password("12345678")
-                .dob(dob)
-                .email("hieuhoang@gmail.com")
-                .phoneNumber("0987654321")
-                .address("Hà Nội")
-                .build();
-
-        userResponse = UserResponse.builder()
-                .id("d426bb04a64c")
-                .firstName("Hiếu")
-                .lastName("Hoàng")
-                .username("hieuhoang2903")
                 .dob(dob)
                 .email("hieuhoang@gmail.com")
                 .phoneNumber("0987654321")
@@ -129,7 +115,7 @@ public class UserServiceTest {
         var responses = userService.getUsers();
 
         Assertions.assertThat(responses).hasSize(1);
-        Assertions.assertThat(responses.get(0).getUsername()).isEqualTo("hieuhoang2903");
+        Assertions.assertThat(responses.getFirst().getUsername()).isEqualTo("hieuhoang2903");
     }
 
     @Test
